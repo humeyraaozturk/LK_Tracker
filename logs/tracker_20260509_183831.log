@@ -1,0 +1,27 @@
+2026-05-09 18:38:31.724  [SİSTEM]  Oturum başladı — 2026-05-09 18:38:31
+2026-05-09 18:38:36.611  [SİSTEM]  Nokta #0 eklendi  (507, 200)
+2026-05-09 18:38:38.562  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:38.562  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:38.563  [REDET]   Nokta #0 bulundu [K1]  (496,208)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:40.707  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (496, 208)
+2026-05-09 18:38:41.601  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:41.601  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:41.602  [REDET]   Nokta #0 bulundu [K1]  (496,207)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:43.444  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (496, 207)
+2026-05-09 18:38:43.874  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:43.874  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:43.874  [REDET]   Nokta #0 bulundu [K1]  (496,207)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:44.708  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (496, 207)
+2026-05-09 18:38:45.300  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:45.300  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:45.301  [REDET]   Nokta #0 bulundu [K1]  (495,207)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:45.941  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (495, 207)
+2026-05-09 18:38:46.738  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:46.738  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:46.739  [REDET]   Nokta #0 bulundu [K1]  (494,206)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:47.399  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (494, 206)
+2026-05-09 18:38:48.496  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 18:38:48.497  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 18:38:48.497  [REDET]   Nokta #0 bulundu [K1]  (494,206)  — onay bekleniyor (Y/N)
+2026-05-09 18:38:50.677  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (494, 206)
+2026-05-09 18:38:52.214  [SİSTEM]  Oturum sona erdi  —  log: logs\tracker_20260509_183831.log

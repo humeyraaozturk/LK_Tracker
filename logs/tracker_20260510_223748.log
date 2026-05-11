@@ -1,0 +1,125 @@
+2026-05-10 22:37:48.560  [SİSTEM]  Oturum başladı — 2026-05-10 22:37:48
+2026-05-10 22:38:01.789  [SİSTEM]  Nokta #0 eklendi  (89, 340)
+2026-05-10 22:38:07.291  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:38:07.291  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:11.229  [REDET]   Nokta #0  K1 başarısız  → K2'e geçiliyor
+2026-05-10 22:38:11.306  [REDET]   Nokta #0 aranıyor  [Kademe 2]  (kare 1)
+2026-05-10 22:38:11.308  [REDET]   Nokta #0 bulundu [K2]  (96,339)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:13.043  [REDET]   Nokta #0 bulundu  [NCC Şablon Eşleme]  (95, 343)
+2026-05-10 22:38:23.018  [SÜRÜK]   Nokta #0 sürükleniyor  dK=5.0  eA=0.0px
+2026-05-10 22:38:30.638  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:38:30.638  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:30.639  [REDET]   Nokta #0 bulundu [K1]  (86,344)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:32.174  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (86, 339)
+2026-05-10 22:38:35.037  [SÜRÜK]   Nokta #0 sürükleniyor  dK=5.3  eA=1.7px
+2026-05-10 22:38:35.948  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:38:35.948  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:35.948  [REDET]   Nokta #0 bulundu [K1]  (85,339)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:36.553  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (79, 339)
+2026-05-10 22:38:39.355  [SÜRÜK]   Nokta #0 sürükleniyor  dK=0.8  eA=1.8px
+2026-05-10 22:38:40.251  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:38:40.251  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:40.252  [REDET]   Nokta #0 bulundu [K1]  (85,344)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:41.456  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (83, 347)
+2026-05-10 22:38:50.608  [SİSTEM]  Nokta #1 eklendi  (113, 301)
+2026-05-10 22:38:50.666  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:38:50.666  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:50.667  [REDET]   Nokta #1 bulundu [K1]  (113,301)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:53.314  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (113, 297)
+2026-05-10 22:38:54.266  [SÜRÜK]   Nokta #0 sürükleniyor  dK=4.0  eA=2.9px
+2026-05-10 22:38:54.319  [SİSTEM]  Nokta #2 eklendi  (77, 299)
+2026-05-10 22:38:54.380  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:38:54.380  [KAYIP]   Nokta #2 kaybedildi
+2026-05-10 22:38:54.380  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:54.380  [REDET]   Nokta #1 bulundu [K1]  (113,288)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:54.380  [REDET]   Nokta #2 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:54.475  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:38:54.475  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:54.476  [REDET]   Nokta #0 bulundu [K1]  (85,342)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:55.210  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (85, 343)
+2026-05-10 22:38:55.210  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (125, 260)
+2026-05-10 22:38:55.495  [SÜRÜK]   Nokta #1 sürükleniyor  dK=1.4  eA=0.0px
+2026-05-10 22:38:55.676  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:38:55.677  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:55.677  [REDET]   Nokta #1 bulundu [K1]  (124,258)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:57.238  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (124, 260)
+2026-05-10 22:38:57.492  [SÜRÜK]   Nokta #1 sürükleniyor  dK=7.9  eA=1.1px
+2026-05-10 22:38:57.675  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:38:57.676  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:57.676  [REDET]   Nokta #1 bulundu [K1]  (126,266)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:58.338  [REDET]   Nokta #2  K1 başarısız  → K2'e geçiliyor
+2026-05-10 22:38:58.381  [REDET]   Nokta #2 aranıyor  [Kademe 2]  (kare 1)
+2026-05-10 22:38:58.384  [REDET]   Nokta #2 bulundu [K2]  (75,310)  — onay bekleniyor (Y/N)
+2026-05-10 22:38:59.199  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (127, 270)
+2026-05-10 22:38:59.199  [REDET]   Nokta #2 bulundu  [NCC Şablon Eşleme]  (77, 309)
+2026-05-10 22:38:59.408  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.4  eA=1.4px
+2026-05-10 22:38:59.482  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:38:59.484  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:38:59.485  [REDET]   Nokta #1 bulundu [K1]  (127,271)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:01.111  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (128, 269)
+2026-05-10 22:39:01.350  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.7  eA=1.4px
+2026-05-10 22:39:01.884  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:01.885  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:01.885  [REDET]   Nokta #1 bulundu [K1]  (128,272)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:02.928  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (127, 270)
+2026-05-10 22:39:03.201  [SÜRÜK]   Nokta #1 sürükleniyor  dK=2.8  eA=1.6px
+2026-05-10 22:39:03.484  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:03.485  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:03.485  [REDET]   Nokta #1 bulundu [K1]  (127,269)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:03.979  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (125, 266)
+2026-05-10 22:39:04.093  [SÜRÜK]   Nokta #1 sürükleniyor  dK=2.3  eA=1.7px
+2026-05-10 22:39:04.201  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:04.206  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:04.207  [REDET]   Nokta #1 bulundu [K1]  (126,269)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:04.605  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (125, 266)
+2026-05-10 22:39:04.902  [SÜRÜK]   Nokta #1 sürükleniyor  dK=5.9  eA=1.8px
+2026-05-10 22:39:05.290  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:05.292  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:05.292  [REDET]   Nokta #1 bulundu [K1]  (125,265)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:05.759  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (125, 267)
+2026-05-10 22:39:06.012  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.3  eA=1.7px
+2026-05-10 22:39:06.301  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:06.302  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:06.303  [REDET]   Nokta #1 bulundu [K1]  (125,265)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:08.819  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (124, 264)
+2026-05-10 22:39:09.038  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.3  eA=1.7px
+2026-05-10 22:39:09.197  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:09.199  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:09.199  [REDET]   Nokta #1 bulundu [K1]  (126,264)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:09.671  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (130, 264)
+2026-05-10 22:39:09.997  [SÜRÜK]   Nokta #1 sürükleniyor  dK=1.1  eA=1.7px
+2026-05-10 22:39:10.120  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:10.122  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:10.123  [REDET]   Nokta #1 bulundu [K1]  (135,267)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:10.328  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (133, 266)
+2026-05-10 22:39:10.609  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.8  eA=1.6px
+2026-05-10 22:39:10.714  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:10.716  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:10.717  [REDET]   Nokta #1 bulundu [K1]  (133,267)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:11.443  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (132, 266)
+2026-05-10 22:39:11.708  [SÜRÜK]   Nokta #1 sürükleniyor  dK=2.1  eA=1.6px
+2026-05-10 22:39:12.108  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:12.109  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:12.110  [REDET]   Nokta #1 bulundu [K1]  (131,264)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:12.116  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (131, 264)
+2026-05-10 22:39:12.411  [SÜRÜK]   Nokta #1 sürükleniyor  dK=5.3  eA=2.0px
+2026-05-10 22:39:12.508  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:12.509  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:12.510  [REDET]   Nokta #1 bulundu [K1]  (130,266)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:12.516  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (130, 266)
+2026-05-10 22:39:12.727  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.6  eA=1.8px
+2026-05-10 22:39:12.815  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:12.817  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:12.818  [REDET]   Nokta #1 bulundu [K1]  (129,268)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:12.827  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (129, 268)
+2026-05-10 22:39:13.052  [SÜRÜK]   Nokta #1 sürükleniyor  dK=0.6  eA=1.8px
+2026-05-10 22:39:13.309  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:13.310  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:13.310  [REDET]   Nokta #1 bulundu [K1]  (129,269)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:18.317  [REDET]   Nokta #1 bulundu  [Histogram+MeanShift]  (124, 262)
+2026-05-10 22:39:18.317  [REDET]   Nokta #1 otomatik onaylandı (süre doldu)
+2026-05-10 22:39:18.813  [SÜRÜK]   Nokta #1 sürükleniyor  dK=3.0  eA=2.8px
+2026-05-10 22:39:19.613  [KAYIP]   Nokta #1 kaybedildi
+2026-05-10 22:39:19.614  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:39:19.615  [REDET]   Nokta #1 bulundu [K1]  (111,248)  — onay bekleniyor (Y/N)
+2026-05-10 22:39:20.350  [SİSTEM]  Oturum sona erdi  —  log: logs\tracker_20260510_223748.log

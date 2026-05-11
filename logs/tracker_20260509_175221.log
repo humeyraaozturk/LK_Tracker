@@ -1,0 +1,32 @@
+2026-05-09 17:52:21.262  [SİSTEM]  Oturum başladı — 2026-05-09 17:52:21
+2026-05-09 17:52:31.511  [SİSTEM]  Nokta #0 eklendi  (485, 188)
+2026-05-09 17:52:32.802  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 17:52:32.802  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 17:52:32.803  [REDET]   Nokta #0 bulundu [K1]  (464,193)  — onay bekleniyor (Y/N)
+2026-05-09 17:52:37.254  [UYARI]   Nokta #0 K1 reddedildi  → K2'den devam
+2026-05-09 17:52:37.265  [REDET]   Nokta #0 aranıyor  [Kademe 2]  (kare 1)
+2026-05-09 17:52:37.266  [REDET]   Nokta #0 bulundu [K2]  (404,217)  — onay bekleniyor (Y/N)
+2026-05-09 17:52:38.808  [REDET]   Nokta #0 bulundu  [NCC Şablon Eşleme]  (404, 217)
+2026-05-09 17:52:39.076  [SÜRÜK]   Nokta #0 sürükleniyor  dK=2.7  eA=0.0px
+2026-05-09 17:52:39.480  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 17:52:39.480  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 17:52:39.481  [REDET]   Nokta #0 bulundu [K1]  (398,216)  — onay bekleniyor (Y/N)
+2026-05-09 17:52:41.221  [UYARI]   Nokta #0 K1 reddedildi  → K2'den devam
+2026-05-09 17:52:41.233  [REDET]   Nokta #0 aranıyor  [Kademe 2]  (kare 1)
+2026-05-09 17:52:41.235  [REDET]   Nokta #0 bulundu [K2]  (366,235)  — onay bekleniyor (Y/N)
+2026-05-09 17:52:42.467  [REDET]   Nokta #0 bulundu  [NCC Şablon Eşleme]  (366, 235)
+2026-05-09 17:52:48.440  [KAYIP]   Nokta #0 kaybedildi
+2026-05-09 17:52:48.441  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 17:52:50.402  [REDET]   Nokta #0  K1 başarısız  → K2'e geçiliyor
+2026-05-09 17:52:50.434  [REDET]   Nokta #0 aranıyor  [Kademe 2]  (kare 1)
+2026-05-09 17:52:52.401  [REDET]   Nokta #0  K2 başarısız  → K3'e geçiliyor
+2026-05-09 17:52:52.433  [REDET]   Nokta #0 aranıyor  [Kademe 3]  (kare 1)
+2026-05-09 17:53:09.867  [SİSTEM]  Nokta #1 eklendi  (282, 231)
+2026-05-09 17:53:09.941  [KAYIP]   Nokta #1 kaybedildi
+2026-05-09 17:53:09.941  [REDET]   Nokta #1 aranıyor  [Kademe 1]  (kare 1)
+2026-05-09 17:53:11.906  [REDET]   Nokta #1  K1 başarısız  → K2'e geçiliyor
+2026-05-09 17:53:11.936  [REDET]   Nokta #1 aranıyor  [Kademe 2]  (kare 1)
+2026-05-09 17:53:11.939  [REDET]   Nokta #1 bulundu [K2]  (283,332)  — onay bekleniyor (Y/N)
+2026-05-09 17:53:13.654  [UYARI]   Nokta #1 K2 reddedildi  → K3'den devam
+2026-05-09 17:53:13.680  [REDET]   Nokta #1 aranıyor  [Kademe 3]  (kare 1)
+2026-05-09 17:53:19.193  [SİSTEM]  Oturum sona erdi  —  log: logs\tracker_20260509_175221.log

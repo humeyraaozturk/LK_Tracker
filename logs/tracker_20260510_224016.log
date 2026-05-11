@@ -1,0 +1,20 @@
+2026-05-10 22:40:16.739  [SİSTEM]  Oturum başladı — 2026-05-10 22:40:16
+2026-05-10 22:40:18.473  [SİSTEM]  Nokta #0 eklendi  (88, 337)
+2026-05-10 22:40:19.980  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:40:19.980  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:40:19.982  [REDET]   Nokta #0 bulundu [K1]  (89,340)  — onay bekleniyor (Y/N)
+2026-05-10 22:40:21.589  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (88, 342)
+2026-05-10 22:40:25.783  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:40:25.783  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:40:25.783  [REDET]   Nokta #0 bulundu [K1]  (91,343)  — onay bekleniyor (Y/N)
+2026-05-10 22:40:26.599  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (90, 344)
+2026-05-10 22:40:28.087  [SÜRÜK]   Nokta #0 sürükleniyor  dK=3.6  eA=0.0px
+2026-05-10 22:40:29.602  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:40:29.602  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:40:29.603  [REDET]   Nokta #0 bulundu [K1]  (91,335)  — onay bekleniyor (Y/N)
+2026-05-10 22:40:30.722  [REDET]   Nokta #0 bulundu  [Histogram+MeanShift]  (87, 340)
+2026-05-10 22:40:31.383  [SÜRÜK]   Nokta #0 sürükleniyor  dK=12.6  eA=1.1px
+2026-05-10 22:40:31.464  [KAYIP]   Nokta #0 kaybedildi
+2026-05-10 22:40:31.464  [REDET]   Nokta #0 aranıyor  [Kademe 1]  (kare 1)
+2026-05-10 22:40:31.465  [REDET]   Nokta #0 bulundu [K1]  (91,339)  — onay bekleniyor (Y/N)
+2026-05-10 22:40:34.010  [SİSTEM]  Oturum sona erdi  —  log: logs\tracker_20260510_224016.log
