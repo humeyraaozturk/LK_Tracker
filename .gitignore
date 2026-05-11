@@ -1,0 +1,15 @@
+# Python virtual environment
+lk_tracker/
+venv/
+env/
+.venv/
+
+# Byte-compiled files
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+
+# logs
+*.log

@@ -1,0 +1,9 @@
+# Raspberry Pi 5 için bağımlılıklar
+# Kurulum: pip install -r requirements_rpi.txt
+#
+# Ön koşul: picamera2 ve libcamera sisteme kurulu olmalı
+# Bkz: README kurulum adımları
+
+opencv-contrib-python-headless   # Qt gerektirmez, SSH'da çalışır
+numpy>=1.24.0
+scipy>=1.11.0
