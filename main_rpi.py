@@ -1,15 +1,15 @@
 # =============================================================
-# main_rpi.py — Raspberry Pi 5 + IMX477 HQ Kamera giriş noktası
+# main_rpi.py � Raspberry Pi 5 + IMX477 HQ Kamera giriþ noktasý
 # =============================================================
-# Picamera2 ile CSI kamera desteği.
-# Bilgisayarda test için main.py kullanın.
+# Picamera2 ile CSI kamera desteði.
+# Bilgisayarda test için main.py kullanýn.
 #
 # Kurulum:
 #   pip install picamera2
 #
-# Çalıştırma:
+# Çalýþtýrma:
 #   python main_rpi.py              # kamera ile
-#   python main_rpi.py video.mp4   # video dosyası ile
+#   python main_rpi.py video.mp4   # video dosyasý ile
 # =============================================================
 
 import sys
@@ -23,7 +23,7 @@ from utils.performance import PerformanceMonitor
 from utils.logger      import EventLogger
 
 
-# ── Fare geri çağrımı ────────────────────────────────────────
+# ¦¦ Fare geri çaðrýmý ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
 def make_mouse_callback(tracker: PointTracker, frame_ref: list):
     def callback(event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -39,26 +39,26 @@ def main():
     source   = sys.argv[1] if len(sys.argv) > 1 else None
     is_video = source is not None
 
-    # ── Kamera başlatma ──────────────────────────────────────
+    # ¦¦ Kamera baþlatma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
     cap     = None
     picam   = None
 
     if is_video:
-        # Video dosyası → standart OpenCV
+        # Video dosyasý � standart OpenCV
         cap = cv2.VideoCapture(source)
         if not cap.isOpened():
-            print("[HATA] Video açılamadı.")
+            print("[HATA] Video açýlamadý.")
             sys.exit(1)
         video_fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
         frame_delay_ms = int(1000.0 / video_fps)
         print(f"[Video] FPS: {video_fps:.1f}  gecikme: {frame_delay_ms}ms")
 
     else:
-        # CSI kamera → Picamera2
+        # CSI kamera � Picamera2
         try:
             from picamera2 import Picamera2
         except ImportError:
-            print("[HATA] picamera2 bulunamadı: pip install picamera2")
+            print("[HATA] picamera2 bulunamadý: pip install picamera2")
             sys.exit(1)
 
         picam = Picamera2()
@@ -78,40 +78,42 @@ def main():
     tracker = PointTracker(logger=logger)
     perf    = PerformanceMonitor(window=30)
 
-    frame_ref = [None]                  # fare callback için paylaşılan referans
+    frame_ref = [None]                  # fare callback için paylaþýlan referans
 
-    WIN = "LK Tracker — Sol tık: nokta ekle"
-    cv2.namedWindow(WIN)
-    cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
+    WIN = "LK Tracker � Sol tik: nokta ekle"
+    cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(WIN, 940, 760)
+
+    mouse_callback_set = False
 
     print("=" * 60)
-    print("  LK Tracker  —  Aşama 1")
-    print("  Sol tık: nokta ekle  |  C: sil  |  Q/ESC: çıkış")
+    print("  LK Tracker  �  Aþama 1")
+    print("  Sol týk: nokta ekle  |  C: sil  |  Q/ESC: çýkýþ")
     print("  F G A D R : katman aç/kapat")
     print("=" * 60)
 
     while True:
-        # ── Kamera okuma ──────────────────────────────────────
+        # ¦¦ Kamera okuma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("capture")
         if is_video:
             ret, frame = cap.read()
             if not ret:
-                print("[BİTTİ] Video sona erdi.")
+                print("[BÝTTÝ] Video sona erdi.")
                 break
         else:
             # Picamera2: capture_array direkt numpy array döner
             frame = picam.capture_array()
-            # Picamera2 BGR888 formatında veriyor, dönüşüm gerekmez
+            # Picamera2 BGR888 formatýnda veriyor, dönüþüm gerekmez
         perf.stop("capture")
 
         frame_ref[0] = frame.copy()
 
-        # ── Algoritma işlem süresi ────────────────────────────
+        # ¦¦ Algoritma iþlem süresi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("process")
         states = tracker.update(frame)
         perf.stop("process")
 
-        # ── Render süresi ─────────────────────────────────────
+        # ¦¦ Render süresi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("render")
         output = compose(
             frame         = frame,
@@ -138,7 +140,15 @@ def main():
 
         cv2.imshow(WIN, output)
 
-        # Video: hedef kare süresinden toplam işlem süresi çıkarılır
+        # Ýlk kare gösterildikten sonra mouse callback'i ayarla
+        if not mouse_callback_set:
+            try:
+                cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
+                mouse_callback_set = True
+            except cv2.error:
+                pass
+
+        # Video: hedef kare süresinden toplam iþlem süresi çýkarýlýr
         wait = max(1, int(frame_delay_ms - perf.last("total")))
         key  = cv2.waitKey(wait) & 0xFF
 
