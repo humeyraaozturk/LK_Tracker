@@ -1,0 +1,6 @@
+RPi VNC Setup
+vncserver :1 -localhost no -geometry 1280x720 -depth 24
+
+----------------------------------------------------------
+
+

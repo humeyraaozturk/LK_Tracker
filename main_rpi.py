@@ -1,15 +1,5 @@
 # =============================================================
-# main_rpi.py � Raspberry Pi 5 + IMX477 HQ Kamera giriþ noktasý
-# =============================================================
-# Picamera2 ile CSI kamera desteði.
-# Bilgisayarda test için main.py kullanýn.
-#
-# Kurulum:
-#   pip install picamera2
-#
-# Çalýþtýrma:
-#   python main_rpi.py              # kamera ile
-#   python main_rpi.py video.mp4   # video dosyasý ile
+# main_rpi.py � Raspberry Pi 5 + IMX477 HQ Kamera
 # =============================================================
 
 import sys
@@ -30,7 +20,7 @@ def make_mouse_callback(tracker: PointTracker, frame_ref: list):
             if frame_ref[0] is not None:
                 gray = cv2.cvtColor(frame_ref[0], cv2.COLOR_BGR2GRAY)
                 tracker.add_point(x, y, gray, frame_bgr=frame_ref[0])
-                print(f"[Nokta eklendi] id={len(tracker.points)-1}  "
+                print(f"[Nokta eklendi] id={len(tracker.points)-1} "
                       f"konum=({x}, {y})")
     return callback
 
@@ -39,22 +29,19 @@ def main():
     source   = sys.argv[1] if len(sys.argv) > 1 else None
     is_video = source is not None
 
-    # ¦¦ Kamera baþlatma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-    cap     = None
-    picam   = None
+    cap   = None
+    picam = None
 
     if is_video:
-        # Video dosyasý � standart OpenCV
         cap = cv2.VideoCapture(source)
         if not cap.isOpened():
             print("[HATA] Video açýlamadý.")
             sys.exit(1)
-        video_fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        video_fps      = cap.get(cv2.CAP_PROP_FPS) or 30.0
         frame_delay_ms = int(1000.0 / video_fps)
         print(f"[Video] FPS: {video_fps:.1f}  gecikme: {frame_delay_ms}ms")
 
     else:
-        # CSI kamera � Picamera2
         try:
             from picamera2 import Picamera2
         except ImportError:
@@ -62,38 +49,53 @@ def main():
             sys.exit(1)
 
         picam = Picamera2()
-        # 1332x990 @120fps veya 2028x1520 @40fps
-        # 640x480 crop ile 30+ fps için en uygun mod: 1332x990
+
+        # BGR888 formatý istiyoruz � Picamera2 bazen RGB veriyor
+        # Aþaðýda test ile doðruluyoruz
         cam_cfg = picam.create_video_configuration(
-            main={"size": (config.FRAME_WIDTH, config.FRAME_HEIGHT),
+            main={"size"  : (config.FRAME_WIDTH, config.FRAME_HEIGHT),
                   "format": "BGR888"},
             controls={"FrameRate": 30},
         )
         picam.configure(cam_cfg)
         picam.start()
-        frame_delay_ms = 1   # Picamera2 zaten FPS'i kontrol ediyor
-        print(f"[Kamera] IMX477  {config.FRAME_WIDTH}x{config.FRAME_HEIGHT}  30fps")
+        frame_delay_ms = 1
+
+        # ¦¦ Renk formatýný otomatik tespit et ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # Mavi piksel deðeri yüksekse BGR, kýrmýzý yüksekse RGB
+        test_frame = picam.capture_array()
+        # Görüntünün sol üst köþesi genellikle düþük doygunluktadýr.
+        # Renk formatýný belirlemek için meta veriye bak.
+        fmt = picam.camera_configuration()["main"]["format"]
+        print(f"[Kamera] IMX477  {config.FRAME_WIDTH}x{config.FRAME_HEIGHT}"
+              f"  30fps  format={fmt}")
+
+        # BGR888 formatý seçildi ama bazý sistemlerde RGB gelir.
+        # Test için kullanýcýdan bilgi alýyoruz: mavi ise dönüþüm gerekli.
+        # needs_rgb2bgr deðiþkeni aþaðýda ayarlanabilir.
+        needs_rgb2bgr = True   # mavi görüntü geliyorsa True yap
 
     logger  = EventLogger(log_dir="logs")
     tracker = PointTracker(logger=logger)
     perf    = PerformanceMonitor(window=30)
 
-    frame_ref = [None]                  # fare callback için paylaþýlan referans
+    frame_ref         = [None]
+    mouse_cb_set      = False
+    mouse_cb_attempts = 0
 
-    WIN = "LK Tracker � Sol tik: nokta ekle"
+    WIN = "LK Tracker"
     cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
     cv2.resizeWindow(WIN, 940, 760)
 
-    mouse_callback_set = False
-
     print("=" * 60)
-    print("  LK Tracker  �  Aþama 1")
+    print("  LK Tracker � Raspberry Pi 5")
     print("  Sol týk: nokta ekle  |  C: sil  |  Q/ESC: çýkýþ")
     print("  F G A D R : katman aç/kapat")
+    print("  Y: onayla  N: reddet")
     print("=" * 60)
 
     while True:
-        # ¦¦ Kamera okuma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ¦¦ Kamera / Video okuma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("capture")
         if is_video:
             ret, frame = cap.read()
@@ -101,19 +103,19 @@ def main():
                 print("[BÝTTÝ] Video sona erdi.")
                 break
         else:
-            # Picamera2: capture_array direkt numpy array döner
             frame = picam.capture_array()
-            # Picamera2 BGR888 formatýnda veriyor, dönüþüm gerekmez
+            if needs_rgb2bgr:
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         perf.stop("capture")
 
         frame_ref[0] = frame.copy()
 
-        # ¦¦ Algoritma iþlem süresi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ¦¦ Algoritma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("process")
         states = tracker.update(frame)
         perf.stop("process")
 
-        # ¦¦ Render süresi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ¦¦ Render ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         perf.start("render")
         output = compose(
             frame         = frame,
@@ -127,36 +129,41 @@ def main():
             perf_summary  = perf.summary(),
         )
         perf.stop("render")
-
-        # Toplam gecikme = capture + process + render
         perf.record_total()
 
-        # Terminale her 15 karede bir yaz
+        # Terminal çýktýsý
         total_q = perf._times["total"]
-        if len(total_q) % 15 == 0:
+        if len(total_q) > 0 and len(total_q) % 15 == 0:
             print("\r" + perf.terminal_line(
                 len(tracker.points), tracker.layers,
                 tracker.frame_conf), end="", flush=True)
 
         cv2.imshow(WIN, output)
 
-        # Ýlk kare gösterildikten sonra mouse callback'i ayarla
-        if not mouse_callback_set:
+        # ¦¦ Mouse callback: imshow sonrasý ayarla ¦¦¦¦¦¦¦¦¦¦¦¦¦
+        if not mouse_cb_set and mouse_cb_attempts < 30:
+            mouse_cb_attempts += 1
             try:
-                cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
-                mouse_callback_set = True
+                cv2.setMouseCallback(
+                    WIN, make_mouse_callback(tracker, frame_ref)
+                )
+                mouse_cb_set = True
+                print(f"\n[OK] Mouse callback ayarlandý "
+                      f"(deneme {mouse_cb_attempts})")
             except cv2.error:
-                pass
+                if mouse_cb_attempts == 30:
+                    print("\n[HATA] Mouse callback ayarlanamadý. "
+                          "Nokta eklemek için klavye kullanýlamaz.")
 
-        # Video: hedef kare süresinden toplam iþlem süresi çýkarýlýr
+        # ¦¦ Bekleme ve klavye ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
         wait = max(1, int(frame_delay_ms - perf.last("total")))
         key  = cv2.waitKey(wait) & 0xFF
 
-        if key in (ord('q'), 27):           # Q veya ESC
+        if key in (ord('q'), 27):
             break
         elif key == ord('c'):
             tracker.remove_all()
-            print("\n[Temizlendi] Tüm noktalar silindi.")
+            print("\n[Temizlendi]")
         elif key == ord('y'):
             tracker.confirm_all_pending()
         elif key == ord('n'):

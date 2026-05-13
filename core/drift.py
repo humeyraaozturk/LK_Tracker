@@ -1,19 +1,19 @@
 # =============================================================
-# core/drift.py — Sürüklenme Tespiti
+# core/drift.py � Sürüklenme Tespiti
 # =============================================================
-# İki bağımsız mekanizma birlikte çalışır:
+# Ýki baðýmsýz mekanizma birlikte çalýþýr:
 #
-# Mekanizma 1 — Bağlantı Noktası Geometri Testi:
-#   Başlangıçta seçilen k anchor noktasının mevcut konumu
-#   afin dönüşümle beklenen konumdan sapıyorsa sürüklenme.
+# Mekanizma 1 � Baðlantý Noktasý Geometri Testi:
+#   Baþlangýçta seçilen k anchor noktasýnýn mevcut konumu
+#   afin dönüþümle beklenen konumdan sapýyorsa sürüklenme.
 #   e_anchor = ||p_current - H_est * p_anchor||_2
 #
-# Mekanizma 2 — Kalman Tutarsızlık Testi:
-#   Kalman öngörüsü ile LK ölçümü arasındaki Mahalanobis
-#   mesafesi eşiği aşarsa sürüklenme.
-#   d_K = sqrt((z - H*x̂)^T * S^-1 * (z - H*x̂))
+# Mekanizma 2 � Kalman Tutarsýzlýk Testi:
+#   Kalman öngörüsü ile LK ölçümü arasýndaki Mahalanobis
+#   mesafesi eþiði aþarsa sürüklenme.
+#   d_K = sqrt((z - H*x^)^T * S^-1 * (z - H*x^))
 #
-# Karar: C̄ < CONF_DRIFT_THR VE (anchor VEYA Kalman) → sürüklenme
+# Karar: C¯ < CONF_DRIFT_THR VE (anchor VEYA Kalman) � sürüklenme
 # =============================================================
 
 import cv2
@@ -21,18 +21,18 @@ import numpy as np
 import config
 
 
-# ── Kalman Filtresi ──────────────────────────────────────────
+# ¦¦ Kalman Filtresi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
 
 class PointKalman:
     """
-    Tek bir takip noktası için sabit hız modeli Kalman filtresi.
-    Durum: x̂ = [x, y, vx, vy]^T
+    Tek bir takip noktasý için sabit hýz modeli Kalman filtresi.
+    Durum: x^ = [x, y, vx, vy]^T
     """
 
     def __init__(self, x: float, y: float):
         self.kf = cv2.KalmanFilter(4, 2)   # 4 durum, 2 ölçüm
 
-        # Geçiş matrisi (sabit hız)
+        # Geçiþ matrisi (sabit hýz)
         self.kf.transitionMatrix = np.array([
             [1, 0, 1, 0],
             [0, 1, 0, 1],
@@ -40,18 +40,18 @@ class PointKalman:
             [0, 0, 0, 1],
         ], dtype=np.float32)
 
-        # Ölçüm matrisi (yalnızca konum)
+        # Ölçüm matrisi (yalnýzca konum)
         self.kf.measurementMatrix = np.array([
             [1, 0, 0, 0],
             [0, 1, 0, 0],
         ], dtype=np.float32)
 
-        # Gürültü kovaryansları
+        # Gürültü kovaryanslarý
         self.kf.processNoiseCov = np.eye(4, dtype=np.float32) * 1e-2
         self.kf.measurementNoiseCov = np.eye(2, dtype=np.float32) * 1e-1
         self.kf.errorCovPost = np.eye(4, dtype=np.float32)
 
-        # Başlangıç durumu
+        # Baþlangýç durumu
         self.kf.statePost = np.array(
             [[x], [y], [0.0], [0.0]], dtype=np.float32
         )
@@ -70,12 +70,12 @@ class PointKalman:
         """
         measurement = np.array([[x], [y]], dtype=np.float32)
 
-        # İnovasyon: z - H*x̂
+        # Ýnovasyon: z - H*x^
         pred_state  = self.kf.statePre
         H           = self.kf.measurementMatrix
         innov       = measurement - H @ pred_state      # (2,1)
 
-        # İnovasyon kovaryansı S = H*P*H^T + R
+        # Ýnovasyon kovaryansý S = H*P*H^T + R
         P = self.kf.errorCovPre
         R = self.kf.measurementNoiseCov
         S = H @ P @ H.T + R                             # (2,2)
@@ -83,8 +83,9 @@ class PointKalman:
         # Mahalanobis mesafesi
         try:
             S_inv = np.linalg.inv(S)
-            d_k   = float(np.sqrt(innov.T @ S_inv @ innov))
-        except np.linalg.LinAlgError:
+            val   = innov.T @ S_inv @ innov
+            d_k   = float(np.sqrt(float(np.squeeze(val))))
+        except (np.linalg.LinAlgError, ValueError):
             d_k = 0.0
 
         self.kf.correct(measurement)
@@ -95,20 +96,20 @@ class PointKalman:
         return self.kf.statePost[:2].flatten()
 
 
-# ── Anchor (Bağlantı Noktası) Yöneticisi ────────────────────
+# ¦¦ Anchor (Baðlantý Noktasý) Yöneticisi ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
 
 class AnchorManager:
     """
-    Başlangıç karesinde hedef bölgesinden seçilen anchor
-    noktalarının mevcut konumlarını takip eder ve geometrik
-    tutarlılığı denetler.
+    Baþlangýç karesinde hedef bölgesinden seçilen anchor
+    noktalarýnýn mevcut konumlarýný takip eder ve geometrik
+    tutarlýlýðý denetler.
     """
 
     def __init__(self, frame_gray: np.ndarray,
                  cx: int, cy: int, roi_size: int = 40):
         """
-        cx, cy: takip noktasının merkezi
-        roi_size: anchor noktalarının seçileceği bölge boyutu
+        cx, cy: takip noktasýnýn merkezi
+        roi_size: anchor noktalarýnýn seçileceði bölge boyutu
         """
         h, w = frame_gray.shape
         x1 = max(0, cx - roi_size // 2)
@@ -127,22 +128,22 @@ class AnchorManager:
         )
 
         if corners is not None and len(corners) > 0:
-            # ROI koordinatlarından tam görüntü koordinatlarına çevir
+            # ROI koordinatlarýndan tam görüntü koordinatlarýna çevir
             self.anchors = corners.reshape(-1, 2) + np.array([x1, y1],
                                                               dtype=np.float32)
         else:
-            # Köşe bulunamazsa merkezi anchor olarak kullan
+            # Köþe bulunamazsa merkezi anchor olarak kullan
             self.anchors = np.array([[cx, cy]], dtype=np.float32)
 
-        self.ref_anchors = self.anchors.copy()   # başlangıç referansı
+        self.ref_anchors = self.anchors.copy()   # baþlangýç referansý
 
     def update(self, prev_gray: np.ndarray,
                curr_gray: np.ndarray,
                lk_params: dict) -> float:
         """
-        Anchor noktalarını LK ile takip eder ve
-        afin dönüşümden beklenen konumla karşılaştırır.
-        Ortalama e_anchor hatasını döndürür.
+        Anchor noktalarýný LK ile takip eder ve
+        afin dönüþümden beklenen konumla karþýlaþtýrýr.
+        Ortalama e_anchor hatasýný döndürür.
         """
         if len(self.anchors) == 0:
             return 0.0
@@ -160,12 +161,12 @@ class AnchorManager:
                 good_ref.append(self.ref_anchors[i])
 
         if len(good_cur) < 3:
-            return config.ANCHOR_THRESHOLD + 1.0   # yetersiz nokta → uyarı
+            return config.ANCHOR_THRESHOLD + 1.0   # yetersiz nokta � uyarý
 
         cur_arr = np.array(good_cur, dtype=np.float32)
         ref_arr = np.array(good_ref, dtype=np.float32)
 
-        # Afin dönüşüm kestirimi
+        # Afin dönüþüm kestirimi
         H, inliers = cv2.estimateAffinePartial2D(
             ref_arr, cur_arr, method=cv2.RANSAC
         )
@@ -173,23 +174,23 @@ class AnchorManager:
         if H is None:
             return config.ANCHOR_THRESHOLD + 1.0
 
-        # Beklenen konumları hesapla
+        # Beklenen konumlarý hesapla
         ref_h  = np.hstack([ref_arr,
                              np.ones((len(ref_arr), 1))]).T   # (3, N)
         expect = (H @ ref_h).T                                # (N, 2)
 
         # Hata
         errors = np.linalg.norm(cur_arr - expect, axis=1)
-        self.anchors = cur_arr   # anchor'ları güncelle
+        self.anchors = cur_arr   # anchor'larý güncelle
 
         return float(np.mean(errors))
 
 
-# ── Ana Sürüklenme Dedektörü ─────────────────────────────────
+# ¦¦ Ana Sürüklenme Dedektörü ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
 
 class DriftDetector:
     """
-    Tek bir TrackedPoint için anchor + Kalman tabanlı
+    Tek bir TrackedPoint için anchor + Kalman tabanlý
     sürüklenme dedektörü.
     """
 
@@ -202,7 +203,7 @@ class DriftDetector:
     def update(self, prev_gray: np.ndarray, curr_gray: np.ndarray,
                x: float, y: float, lk_params: dict) -> bool:
         """
-        Sürüklenme testi çalıştırır.
+        Sürüklenme testi çalýþtýrýr.
 
         Döndürür:
             is_drifting : bool
@@ -214,7 +215,7 @@ class DriftDetector:
         # Anchor testi
         self.e_anchor = self.anchor.update(prev_gray, curr_gray, lk_params)
 
-        # Karar: en az bir test eşiği aşmalı
+        # Karar: en az bir test eþiði aþmalý
         kalman_alarm = self.d_k     > config.KALMAN_THRESHOLD
         anchor_alarm = self.e_anchor > config.ANCHOR_THRESHOLD
 
