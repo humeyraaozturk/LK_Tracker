@@ -70,10 +70,11 @@ def main():
 
     frame_ref = [None]                  # fare callback için paylaşılan referans
 
-    WIN = "LK Tracker — Sol tık: nokta ekle"
-    cv2.namedWindow(WIN)
+    WIN = "LK Tracker"
+    cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(WIN, 1600, 960)
     cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
-
+    
     print("=" * 60)
     print("  LK Tracker  —  Aşama 1")
     print("  Sol tık: nokta ekle  |  C: sil  |  Q/ESC: çıkış")

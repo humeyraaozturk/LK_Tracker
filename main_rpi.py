@@ -1,5 +1,21 @@
 # =============================================================
-# main_rpi.py � Raspberry Pi 5 + IMX477 HQ Kamera
+# main_rpi.py — Raspberry Pi 5 + IMX477 HQ Kamera
+# =============================================================
+# Kullanım:
+#   python main_rpi.py              # kamera ile
+#   python main_rpi.py video.mp4   # video dosyası ile
+#
+# Klavye kısayolları:
+#   Sol tık  → nokta ekle
+#   C        → tüm noktaları sil
+#   Y        → onay bekleyen noktayı onayla
+#   N        → onay bekleyen noktayı reddet
+#   F        → ileri-geri hata katmanı aç/kapat
+#   G        → güven skoru katmanı aç/kapat
+#   A        → adaptif parametre katmanı aç/kapat
+#   D        → sürüklenme tespiti katmanı aç/kapat
+#   R        → yeniden tespit katmanı aç/kapat
+#   Q / ESC  → çıkış
 # =============================================================
 
 import sys
@@ -13,7 +29,7 @@ from utils.performance import PerformanceMonitor
 from utils.logger      import EventLogger
 
 
-# ¦¦ Fare geri çaðrýmý ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+# ── Fare geri çağrımı ────────────────────────────────────────
 def make_mouse_callback(tracker: PointTracker, frame_ref: list):
     def callback(event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -35,7 +51,7 @@ def main():
     if is_video:
         cap = cv2.VideoCapture(source)
         if not cap.isOpened():
-            print("[HATA] Video açýlamadý.")
+            print("[HATA] Video açılamadı.")
             sys.exit(1)
         video_fps      = cap.get(cv2.CAP_PROP_FPS) or 30.0
         frame_delay_ms = int(1000.0 / video_fps)
@@ -45,13 +61,10 @@ def main():
         try:
             from picamera2 import Picamera2
         except ImportError:
-            print("[HATA] picamera2 bulunamadý: pip install picamera2")
+            print("[HATA] picamera2 bulunamadı: pip install picamera2")
             sys.exit(1)
 
         picam = Picamera2()
-
-        # BGR888 formatý istiyoruz � Picamera2 bazen RGB veriyor
-        # Aþaðýda test ile doðruluyoruz
         cam_cfg = picam.create_video_configuration(
             main={"size"  : (config.FRAME_WIDTH, config.FRAME_HEIGHT),
                   "format": "BGR888"},
@@ -61,19 +74,12 @@ def main():
         picam.start()
         frame_delay_ms = 1
 
-        # ¦¦ Renk formatýný otomatik tespit et ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-        # Mavi piksel deðeri yüksekse BGR, kýrmýzý yüksekse RGB
-        test_frame = picam.capture_array()
-        # Görüntünün sol üst köþesi genellikle düþük doygunluktadýr.
-        # Renk formatýný belirlemek için meta veriye bak.
         fmt = picam.camera_configuration()["main"]["format"]
         print(f"[Kamera] IMX477  {config.FRAME_WIDTH}x{config.FRAME_HEIGHT}"
               f"  30fps  format={fmt}")
 
-        # BGR888 formatý seçildi ama bazý sistemlerde RGB gelir.
-        # Test için kullanýcýdan bilgi alýyoruz: mavi ise dönüþüm gerekli.
-        # needs_rgb2bgr deðiþkeni aþaðýda ayarlanabilir.
-        needs_rgb2bgr = True   # mavi görüntü geliyorsa True yap
+        # Picamera2 bazı sistemlerde RGB verir, True yaparsanız BGR'ye çevrilir
+        needs_rgb2bgr = True
 
     logger  = EventLogger(log_dir="logs")
     tracker = PointTracker(logger=logger)
@@ -85,22 +91,22 @@ def main():
 
     WIN = "LK Tracker"
     cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(WIN, 940, 760)
+    cv2.resizeWindow(WIN, config.FRAME_WIDTH + 450, config.FRAME_HEIGHT + 300)
 
     print("=" * 60)
-    print("  LK Tracker � Raspberry Pi 5")
-    print("  Sol týk: nokta ekle  |  C: sil  |  Q/ESC: çýkýþ")
+    print("  LK Tracker — Raspberry Pi")
+    print("  Sol tık: nokta ekle  |  C: sil  |  Q/ESC: çıkış")
     print("  F G A D R : katman aç/kapat")
     print("  Y: onayla  N: reddet")
     print("=" * 60)
 
     while True:
-        # ¦¦ Kamera / Video okuma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ── Kamera / Video okuma ──────────────────────────────
         perf.start("capture")
         if is_video:
             ret, frame = cap.read()
             if not ret:
-                print("[BÝTTÝ] Video sona erdi.")
+                print("[BİTTİ] Video sona erdi.")
                 break
         else:
             frame = picam.capture_array()
@@ -110,12 +116,12 @@ def main():
 
         frame_ref[0] = frame.copy()
 
-        # ¦¦ Algoritma ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ── Algoritma ─────────────────────────────────────────
         perf.start("process")
         states = tracker.update(frame)
         perf.stop("process")
 
-        # ¦¦ Render ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ── Render ────────────────────────────────────────────
         perf.start("render")
         output = compose(
             frame         = frame,
@@ -131,7 +137,7 @@ def main():
         perf.stop("render")
         perf.record_total()
 
-        # Terminal çýktýsý
+        # Terminal çıktısı — her 15 karede bir
         total_q = perf._times["total"]
         if len(total_q) > 0 and len(total_q) % 15 == 0:
             print("\r" + perf.terminal_line(
@@ -140,7 +146,7 @@ def main():
 
         cv2.imshow(WIN, output)
 
-        # ¦¦ Mouse callback: imshow sonrasý ayarla ¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ── Mouse callback: imshow sonrası ayarla ─────────────
         if not mouse_cb_set and mouse_cb_attempts < 30:
             mouse_cb_attempts += 1
             try:
@@ -148,14 +154,13 @@ def main():
                     WIN, make_mouse_callback(tracker, frame_ref)
                 )
                 mouse_cb_set = True
-                print(f"\n[OK] Mouse callback ayarlandý "
+                print(f"\n[OK] Mouse callback ayarlandı "
                       f"(deneme {mouse_cb_attempts})")
             except cv2.error:
                 if mouse_cb_attempts == 30:
-                    print("\n[HATA] Mouse callback ayarlanamadý. "
-                          "Nokta eklemek için klavye kullanýlamaz.")
+                    print("\n[HATA] Mouse callback ayarlanamadı.")
 
-        # ¦¦ Bekleme ve klavye ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+        # ── Bekleme ve klavye ─────────────────────────────────
         wait = max(1, int(frame_delay_ms - perf.last("total")))
         key  = cv2.waitKey(wait) & 0xFF
 

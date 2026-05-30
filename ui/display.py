@@ -13,7 +13,7 @@ import numpy as np
 import config
 
 # ── Sabitler ─────────────────────────────────────────────────
-PANEL_W   = 300
+PANEL_W   = 450
 BG        = (18, 18, 18)
 FG        = (220, 220, 220)
 DIM       = (90, 90, 90)
@@ -39,12 +39,12 @@ STATE_LABEL = {
 
 # ── Yardımcı çizim fonksiyonları ─────────────────────────────
 
-def _text(img, txt, x, y, color=FG, scale=0.42, thickness=1):
+def _text(img, txt, x, y, color=FG, scale=0.52, thickness=1):
     cv2.putText(img, str(txt), (x, y), FONT, scale,
                 color, thickness, cv2.LINE_AA)
 
 
-def _bold(img, txt, x, y, color=FG, scale=0.44):
+def _bold(img, txt, x, y, color=FG, scale=0.54):
     cv2.putText(img, str(txt), (x, y), FONT_BOLD, scale,
                 color, 1, cv2.LINE_AA)
 
@@ -63,11 +63,11 @@ def _bar(img, x, y, w, h, value, color, bg=(40, 40, 40)):
 
 
 def _badge(img, txt, x, y, color):
-    (tw, th), _ = cv2.getTextSize(str(txt), FONT, 0.36, 1)
+    (tw, th), _ = cv2.getTextSize(str(txt), FONT, 0.44, 1)
     pad = 3
     cv2.rectangle(img, (x - pad, y - th - pad),
                   (x + tw + pad, y + pad), color, -1)
-    cv2.putText(img, str(txt), (x, y), FONT, 0.36,
+    cv2.putText(img, str(txt), (x, y), FONT, 0.44,
                 (255, 255, 255), 1, cv2.LINE_AA)
 
 
@@ -135,7 +135,7 @@ def build_panel(height: int, fps: float, avg_ms: float,
     # Başlık
     cv2.rectangle(panel, (0, 0), (PANEL_W, 32), (28, 28, 28), -1)
     _bold(panel, "LK TRACKER", 10, 22, ACCENT, 0.52)
-    _text(panel, "v1.0", PANEL_W - 42, 22, DIM, 0.38)
+    _text(panel, "v1.0", PANEL_W - 42, 22, DIM, 0.48)
     y = 36
 
     # ── Pending uyarı bandı ───────────────────────────────────
@@ -155,15 +155,15 @@ def build_panel(height: int, fps: float, avg_ms: float,
         _bold(panel, f"{min_remaining:.1f}s", PANEL_W - 40,
               y + 13, (0, 215, 255), 0.48)
         _text(panel, "Y: Onayla    N: Reddet",
-              8, y + 28, (180, 180, 180), 0.36)
+              8, y + 28, (180, 180, 180), 0.46)
         y += 40
     _hline(panel, y);  y += 12
     _bold(panel, "PERFORMANS", 8, y, FG, 0.40);  y += 16
 
     fps_color = ACCENT if fps >= 28 else (WARN if fps >= 15 else ERR)
-    _text(panel, "FPS",   8,  y, DIM, 0.38)
+    _text(panel, "FPS",   8,  y, DIM, 0.48)
     _bold(panel, f"{fps:.1f}", 44, y, fps_color, 0.52)
-    _text(panel, "nokta", 130, y, DIM, 0.38)
+    _text(panel, "nokta", 130, y, DIM, 0.48)
     _bold(panel, str(len(states)), 178, y, FG, 0.50)
     y += 16
 
@@ -183,16 +183,16 @@ def build_panel(height: int, fps: float, avg_ms: float,
             if is_total:
                 _hline(panel, y + 1, color=(50, 50, 50))
                 y += 4
-                _bold(panel, label, 8, y + 11, FG, 0.38)
+                _bold(panel, label, 8, y + 11, FG, 0.48)
                 _bold(panel, f"{val:.1f}ms", PANEL_W - 52,
                       y + 11, val_color, 0.40)
             else:
-                _text(panel, label, 14, y + 11, DIM, 0.35)
+                _text(panel, label, 14, y + 11, DIM, 0.45)
                 _text(panel, f"{val:.1f}ms", PANEL_W - 50,
-                      y + 11, val_color, 0.36)
+                      y + 11, val_color, 0.46)
             y += 14
     else:
-        _text(panel, f"proc: {avg_ms:.1f}ms", 8, y, DIM, 0.38)
+        _text(panel, f"proc: {avg_ms:.1f}ms", 8, y, DIM, 0.48)
         y += 16
 
     # ── Kare Güven Skoru ─────────────────────────────────────
@@ -212,8 +212,8 @@ def build_panel(height: int, fps: float, avg_ms: float,
     t2 = bx + int(bw * config.CONF_DRIFT_THR)
     cv2.line(panel, (t1, y - 14), (t1, y + 4), ERR,  1)
     cv2.line(panel, (t2, y - 14), (t2, y + 4), WARN, 1)
-    _text(panel, f"{config.CONF_LOST_THR}", t1 - 6, y + 14, ERR, 0.30)
-    _text(panel, f"{config.CONF_DRIFT_THR}", t2 - 6, y + 14, WARN, 0.30)
+    _text(panel, f"{config.CONF_LOST_THR}", t1 - 6, y + 14, ERR, 0.40)
+    _text(panel, f"{config.CONF_DRIFT_THR}", t2 - 6, y + 14, WARN, 0.40)
     y += 24
 
     # ── Katmanlar ────────────────────────────────────────────
@@ -235,10 +235,10 @@ def build_panel(height: int, fps: float, avg_ms: float,
         status = "ON" if aktif else "OFF"
 
         cv2.circle(panel, (14, y - 2), 5, dot_c, -1, cv2.LINE_AA)
-        _text(panel, f"[{kc}]", 22, y, txt_c, 0.38)
-        _text(panel, label,     50, y, txt_c, 0.38)
+        _text(panel, f"[{kc}]", 22, y, txt_c, 0.48)
+        _text(panel, label,     50, y, txt_c, 0.48)
         _text(panel, status, PANEL_W - 36, y,
-              ACCENT if aktif else DIM, 0.36)
+              ACCENT if aktif else DIM, 0.46)
         y += 16
 
         if key == "adaptive" and aktif and adaptive_meta:
@@ -246,7 +246,7 @@ def build_panel(height: int, fps: float, avg_ms: float,
             s = (f"  win={m.get('winSize','?')}  "
                  f"lv={m.get('maxLevel','?')}  "
                  f"it={m.get('iter','?')}")
-            _text(panel, s, 8, y, (0, 160, 80), 0.34)
+            _text(panel, s, 8, y, (0, 160, 80), 0.44)
             y += 14
 
     # ── ReID Durumu ───────────────────────────────────────────
@@ -285,8 +285,8 @@ def build_panel(height: int, fps: float, avg_ms: float,
         if is_success:
             cv2.rectangle(panel, (4, y - 12),
                           (PANEL_W - 4, y + 5), (0, 55, 28), -1)
-            _bold(panel, slabel, 10, y, ACCENT, 0.38)
-            _text(panel, sms, PANEL_W - 42, y, ACCENT, 0.34)
+            _bold(panel, slabel, 10, y, ACCENT, 0.48)
+            _text(panel, sms, PANEL_W - 42, y, ACCENT, 0.44)
             cv2.circle(panel, (PANEL_W - 10, y - 4),
                        4, ACCENT, -1, cv2.LINE_AA)
         elif searching_this and layers.get("redetection"):
@@ -301,20 +301,20 @@ def build_panel(height: int, fps: float, avg_ms: float,
             limit = (config.REDET_K1_MAX_FRAMES if sno == 1
                      else config.REDET_K2_MAX_FRAMES if sno == 2
                      else config.REDET_K3_MAX_FRAMES)
-            _bold(panel, slabel, 10, y, WARN, 0.38)
-            _text(panel, f"{kf}/{limit}", PANEL_W - 52, y, WARN, 0.34)
+            _bold(panel, slabel, 10, y, WARN, 0.48)
+            _text(panel, f"{kf}/{limit}", PANEL_W - 52, y, WARN, 0.44)
             cv2.circle(panel, (PANEL_W - 10, y - 4),
                        4, WARN, -1, cv2.LINE_AA)
         elif is_done:
-            _text(panel, slabel, 10, y, (60, 60, 60), 0.38)
-            _text(panel, "gecildi", PANEL_W - 52, y, (60, 60, 60), 0.34)
+            _text(panel, slabel, 10, y, (60, 60, 60), 0.48)
+            _text(panel, "gecildi", PANEL_W - 52, y, (60, 60, 60), 0.44)
         else:
-            _text(panel, slabel, 10, y, DIM, 0.38)
-            _text(panel, sms, PANEL_W - 42, y, DIM, 0.34)
+            _text(panel, slabel, 10, y, DIM, 0.48)
+            _text(panel, sms, PANEL_W - 42, y, DIM, 0.44)
         y += 18
 
     if not layers.get("redetection"):
-        _text(panel, "Katman kapali", 10, y, DIM, 0.36)
+        _text(panel, "Katman kapali", 10, y, DIM, 0.46)
         y += 14
 
     # ── Nokta Detayları ───────────────────────────────────────
@@ -323,7 +323,7 @@ def build_panel(height: int, fps: float, avg_ms: float,
 
     for info in states:
         if y + 80 > height - 80:
-            _text(panel, f"... +{len(states)} nokta", 8, y, DIM, 0.36)
+            _text(panel, f"... +{len(states)} nokta", 8, y, DIM, 0.46)
             break
 
         pid   = info["id"]
@@ -349,7 +349,7 @@ def build_panel(height: int, fps: float, avg_ms: float,
         # Güven çubuğu
         conf_c = (ACCENT if conf >= config.CONF_DRIFT_THR
                   else WARN if conf >= config.CONF_LOST_THR else ERR)
-        _text(panel, f"C={conf:.2f}", 8, y, FG, 0.36)
+        _text(panel, f"C={conf:.2f}", 8, y, FG, 0.46)
         _bar(panel, 58, y - 10, PANEL_W - 68, 12, conf, conf_c)
         y += 14
 
@@ -360,12 +360,12 @@ def build_panel(height: int, fps: float, avg_ms: float,
                   f"fb={comps.get('fb',0):.2f}  "
                   f"eig={comps.get('eig',0):.2f}  "
                   f"grd={comps.get('grad',0):.2f}",
-                  8, y, DIM, 0.32)
+                  8, y, DIM, 0.42)
             y += 13
 
         _text(panel,
               f"FB={fb:.1f}px  dK={dk:.1f}  eA={ea:.1f}",
-              8, y, DIM, 0.34)
+              8, y, DIM, 0.44)
         y += 14
 
         # Kayıp durumunda kademe ve ilerleme bilgisi
@@ -387,7 +387,7 @@ def build_panel(height: int, fps: float, avg_ms: float,
             _text(panel,
                   f"K{active_kademe}: {kademe_frames}/{limit}  "
                   f"Toplam: {lost_frames}  σ={sigma_eff:.1f}",
-                  8, y, warn_color, 0.33)
+                  8, y, warn_color, 0.43)
             y += 12
             # Kademe ilerleme çubuğu
             if isinstance(limit, int) and limit > 0:
@@ -400,12 +400,12 @@ def build_panel(height: int, fps: float, avg_ms: float,
     # ── Klavye kısayolları ────────────────────────────────────
     ky = height - 72
     _hline(panel, ky);  ky += 10
-    _bold(panel, "KISAYOLLAR", 8, ky, DIM, 0.36);  ky += 14
+    _bold(panel, "KISAYOLLAR", 8, ky, DIM, 0.46);  ky += 14
     for s in ["Sol tik: nokta ekle",
                "C: temizle  Q/ESC: cikis",
                "Y: onayla  N: reddet",
                "F G A D R: katman"]:
-        _text(panel, s, 8, ky, DIM, 0.33)
+        _text(panel, s, 8, ky, DIM, 0.43)
         ky += 13
 
     return panel
@@ -426,11 +426,11 @@ def build_log_panel(width: int, events: list) -> np.ndarray:
     cv2.line(panel, (0, 0), (width, 0), (50, 50, 50), 1)
 
     # Başlık
-    _bold(panel, "OLAY KAYITLARI", 8, 14, DIM, 0.38)
+    _bold(panel, "OLAY KAYITLARI", 8, 14, DIM, 0.48)
     _hline(panel, 18, color=(40, 40, 40))
 
     if not events:
-        _text(panel, "Henüz olay yok...", 8, 38, DIM, 0.36)
+        _text(panel, "Henüz olay yok...", 8, 38, DIM, 0.46)
         return panel
 
     y = 32
@@ -451,9 +451,9 @@ def build_log_panel(width: int, events: list) -> np.ndarray:
             "info"     : " ",
         }.get(etype, " ")
 
-        _text(panel, ts,              8,   y, DIM,   0.33)
-        _text(panel, prefix,          82,  y, color, 0.38)
-        _text(panel, msg,             96,  y, color, 0.36)
+        _text(panel, ts,              8,   y, DIM,   0.43)
+        _text(panel, prefix,          82,  y, color, 0.48)
+        _text(panel, msg,             96,  y, color, 0.46)
         y += 16
 
     return panel

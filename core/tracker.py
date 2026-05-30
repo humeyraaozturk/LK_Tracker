@@ -289,6 +289,8 @@ class PointTracker:
 
             pt.lost_frames   += 1
             pt.kademe_frames += 1
+            if pt.lost_frames < config.REDET_DELAY_FRAMES:
+                continue
 
             if self.logger and not pt.searching_logged:
                 self.logger.log(
@@ -331,10 +333,20 @@ class PointTracker:
 
             if result is not None:
                 cx, cy, stage = result
-                pt.pending_pos   = np.array([cx, cy], dtype=np.float32)
-                pt.pending_stage = stage
-                pt.pending_time  = time.time()
-                pt.state         = "pending"
+                if config.REID_CONFIRM_REQUIRED:
+                    pt.pending_pos   = np.array([cx, cy], dtype=np.float32)
+                    pt.pending_stage = stage
+                    pt.pending_time  = time.time()
+                    pt.state         = "pending"
+                    if self.logger:
+                        self.logger.log(
+                            "redet",
+                            f"Nokta #{pt.id} bulundu [K{stage}]  "
+                            f"({cx},{cy})  — onay bekleniyor (Y/N)"
+                        )
+                else:
+                    # Otomatik onayla
+                    self._confirm_redet_direct(pt, cx, cy, stage)
                 if self.logger:
                     self.logger.log(
                         "redet",
@@ -370,6 +382,29 @@ class PointTracker:
         if self.logger:
             self.logger.redet_found(pt.id, pt.redet_stage, cx, cy)
 
+    def _confirm_redet_direct(self, pt, cx: int, cy: int, stage: int):
+        """Onay beklemeden doğrudan tracking'e al."""
+        pt.position         = np.array([cx, cy], dtype=np.float32)
+        pt.redet_stage      = stage
+        pt.state            = "tracking"
+        pt.conf             = 0.6
+        pt.warmup_frames    = 8
+        pt.lost_frames      = 0
+        pt.kademe_frames    = 0
+        pt.active_kademe    = 1
+        pt.searching_logged = False
+        pt.pending_pos      = None
+        pt.pending_stage    = 0
+        pt.pending_time     = None
+        pt.pending_skipped_stages.clear()
+        pt.trail.append((cx, cy))
+        pt.drift_detector.kalman.kf.statePost = np.array(
+            [[float(cx)], [float(cy)], [0.0], [0.0]],
+            dtype=np.float32
+        )
+        if self.logger:
+            self.logger.redet_found(pt.id, stage, cx, cy)
+        
     def _reject_redet(self, pt):
         """Pending noktayı reddeder, bir sonraki kademeden devam eder."""
         rejected_stage = pt.pending_stage

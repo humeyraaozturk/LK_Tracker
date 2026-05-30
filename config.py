@@ -20,7 +20,7 @@ EPS_MIN          = 0.01
 EPS_MAX          = 0.03
 
 # ── İleri-Geri Hata Eşiği ───────────────────────────────────
-FB_THRESHOLD     = 1.5        # piksel cinsinden
+FB_THRESHOLD     = 3.0        # piksel cinsinden
 
 # ── NCC Eşiği ───────────────────────────────────────────────
 NCC_THRESHOLD    = 0.60
@@ -33,13 +33,13 @@ W_EIG            = 0.20
 W_GRAD           = 0.15
 
 # ── Güven Skoru Eşikleri ─────────────────────────────────────
-CONF_DRIFT_THR   = 0.45       # altında → sürüklenme riski
-CONF_LOST_THR    = 0.25       # altında → kayıp ilan et
+CONF_DRIFT_THR   = 0.25       # altında → sürüklenme riski
+CONF_LOST_THR    = 0.08       # altında → kayıp ilan et
 
 # ── Sürüklenme Tespiti ───────────────────────────────────────
 ANCHOR_COUNT     = 10         # bağlantı noktası sayısı
-ANCHOR_THRESHOLD = 5.0        # piksel cinsinden e_anchor eşiği
-KALMAN_THRESHOLD = 3.0        # Mahalanobis eşiği (χ² %95)
+ANCHOR_THRESHOLD = 15.0        # piksel cinsinden e_anchor eşiği
+KALMAN_THRESHOLD = 6.0        # Mahalanobis eşiği (χ² %95)
 
 # ── Yeniden Tespit ───────────────────────────────────────────
 HIST_THRESHOLD      = 0.35    # Bhattacharyya benzerlik skoru (1-dist)
@@ -54,6 +54,7 @@ SEARCH_GROWTH_RATE  = 0.3     # her adımda σ'ya eklenen miktar
 # K1 bu kadar kare başarısız olursa K2'ye geçilir
 # K2 bu kadar kare başarısız olursa K3'e geçilir
 # K3 bu kadar kare başarısız olursa nokta kaldırılır
+REDET_DELAY_FRAMES  = 30   # kayip sonrasi bu kadar bekle sonra ara
 REDET_K1_MAX_FRAMES = 120     # ~4 sn @30fps
 REDET_K2_MAX_FRAMES = 120     # ~4 sn @30fps
 REDET_K3_MAX_FRAMES = 180     # ~6 sn @30fps
@@ -82,3 +83,6 @@ LAYERS = {
     "drift"       : True,   # Sürüklenme tespiti
     "redetection" : True,   # Kademeli yeniden tespit
 }
+# Yeniden tespit onay mekanizması
+REID_CONFIRM_REQUIRED = True  # False: otomatik onayla
+

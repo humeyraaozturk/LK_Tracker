@@ -13,3 +13,7 @@ __pycache__/
 
 # logs
 *.log
+*.csv
+
+fix.py
+updates.txt
