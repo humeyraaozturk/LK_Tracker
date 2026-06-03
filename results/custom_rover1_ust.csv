@@ -1,0 +1,7 @@
+config,mae,median_err,max_err,track_ratio,n_tracked,n_lost,n_gt_frames,n_reid_accepted,n_reid_rejected
+K0_LK_only,23.085,6.339,246.283,0.735,314,113,427,0,0
+K1_LK_FB,23.085,6.339,246.283,0.735,314,113,427,0,0
+K2_LK_FB_Conf,23.085,6.339,246.283,0.735,314,113,427,0,0
+K3_LK_FB_Conf_Adapt,11.647,4.127,61.793,1.0,427,0,427,0,0
+K4_LK_FB_Conf_Adapt_Drift,11.647,4.127,61.793,1.0,427,0,427,0,0
+K5_Tam_Sistem,11.647,4.127,61.793,1.0,427,0,427,0,0
