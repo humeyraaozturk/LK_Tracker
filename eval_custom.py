@@ -71,18 +71,14 @@ CONFIGS = {
 
 # ── GT yükleme ────────────────────────────────────────────────
 
-def load_gt(csv_path: str) -> dict:
-    """
-    CSV GT dosyasını yükler.
-    Döndürür: {frame_idx: (x, y, manual)}
-    """
+def load_gt(csv_path: str, scale_x: float = 1.0, scale_y: float = 1.0) -> dict:
     gt = {}
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             fi     = int(row["frame"])
-            x      = float(row["x"])
-            y      = float(row["y"])
+            x      = float(row["x"]) * scale_x
+            y      = float(row["y"]) * scale_y
             manual = row.get("manual", "False").strip().lower() == "true"
             gt[fi] = (x, y, manual)
     return gt
@@ -92,6 +88,8 @@ def load_gt(csv_path: str) -> dict:
 
 def load_video(video_path: str) -> list:
     cap    = cv2.VideoCapture(video_path)
+    orig_w   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    orig_h   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frames = []
     total  = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     print(f"[Video] {total} kare yükleniyor...", end="", flush=True)
@@ -99,10 +97,11 @@ def load_video(video_path: str) -> list:
         ret, frame = cap.read()
         if not ret:
             break
+        frame = cv2.resize(frame, (640, 480))
         frames.append(frame)
     cap.release()
     print(f" {len(frames)} kare.")
-    return frames
+    return frames, orig_w, orig_h
 
 
 # Yeniden tespit onay eşiği (piksel)
@@ -282,8 +281,10 @@ def main():
 
     os.makedirs(args.out_dir, exist_ok=True)
 
-    frames = load_video(args.video)
-    gt     = load_gt(args.gt)
+    frames, orig_w, orig_h = load_video(args.video)
+    scale_x = 640 / orig_w
+    scale_y = 480 / orig_h
+    gt = load_gt(args.gt, scale_x=scale_x, scale_y=scale_y)
 
     manual_c = sum(1 for _, _, m in gt.values() if m)
     print(f"[GT] {len(gt)} kare  "
