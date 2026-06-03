@@ -150,6 +150,14 @@ class PointTracker:
                     prev_pts, next_pts, self.lk_params,
                 )
                 fb_mask = filter_by_fb(fb_errors)
+                
+                # Global hareket tespiti: aktif noktaların %70'inden fazlası
+                # FB'den başarısız olduysa kamera sarsıntısı varsay,
+                # bu karede FB filtresini atla
+                if len(active) >= 2:
+                    fail_ratio = 1.0 - (fb_mask.sum() / len(fb_mask))
+                    if fail_ratio >= 0.50:
+                        fb_mask = np.ones(len(active), dtype=bool)
             else:
                 fb_errors = np.zeros(len(active), dtype=np.float32)
                 fb_mask   = np.ones(len(active), dtype=bool)

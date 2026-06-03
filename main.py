@@ -72,7 +72,7 @@ def main():
 
     WIN = "LK Tracker"
     cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(WIN, 1600, 960)
+    cv2.resizeWindow(WIN, config.FRAME_WIDTH + 450, config.FRAME_HEIGHT + 300)
     cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
     
     print("=" * 60)
@@ -91,6 +91,7 @@ def main():
             print("[BİTTİ] Video sona erdi veya kamera hatası.")
             break
 
+        frame = cv2.resize(frame, (config.FRAME_WIDTH, config.FRAME_HEIGHT))
         frame_ref[0] = frame.copy()
 
         # ── Algoritma işlem süresi ────────────────────────────
