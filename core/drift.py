@@ -219,4 +219,4 @@ class DriftDetector:
         kalman_alarm = self.d_k     > config.KALMAN_THRESHOLD
         anchor_alarm = self.e_anchor > config.ANCHOR_THRESHOLD
 
-        return bool(kalman_alarm or anchor_alarm)
+        return bool(kalman_alarm and anchor_alarm)

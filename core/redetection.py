@@ -135,8 +135,13 @@ def detect_by_orb(frame_gray: np.ndarray,
     if des2 is None or len(kp2) < config.ORB_MIN_MATCHES:
         return None
 
-    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-    matches = matcher.match(ref_des, des2)
+    matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+    raw = matcher.knnMatch(ref_des, des2, k=2)
+    matches = []
+    for m, n in raw:
+        if m.distance < 0.75 * n.distance:
+            matches.append(m)
+            
     if len(matches) < config.ORB_MIN_MATCHES:
         return None
 

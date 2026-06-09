@@ -238,7 +238,7 @@ class PointTracker:
                             pt.searching_logged = False
                             if self.logger:
                                 self.logger.point_lost(pt.id)
-                        elif score < drift_thr:
+                        elif score < drift_thr and self.layers.get("drift"):
                             if prev_state == "tracking" and self.logger:
                                 self.logger.point_drifting(
                                     pt.id, pt.d_k, pt.e_anchor
@@ -604,7 +604,8 @@ class TrackedPoint:
         # ── Sürüklenme Tespiti ───────────────────────────────
         # Yalnızca güven riski varsa (drifting) VE katman aktifse
         if (layers.get("drift") and
-                self.state == "drifting" and
+                self.state in ("tracking", "drifting") and
+                self.warmup_frames == 0 and
                 prev_gray is not None and
                 lk_params is not None):
             is_drifting = self.drift_detector.update(
@@ -616,15 +617,10 @@ class TrackedPoint:
             self.e_anchor = self.drift_detector.e_anchor
 
             if is_drifting:
-                self.state = "lost"
-        else:
-            # Drift katmanı kapalı veya tracking durumundaysa
-            # Kalman'ı yine de güncelle (tutarlı öngörü için)
-            if layers.get("drift") and lk_params is not None:
-                self.drift_detector.kalman.predict()
-                self.d_k = self.drift_detector.kalman.update(
-                    float(new_pos[0]), float(new_pos[1])
-                )
+                if self.state == "tracking":
+                    self.state = "drifting"   # tracking → drifting
+                else:
+                    self.state = "lost"       # drifting → lost
 
     def get_info(self) -> dict:
         return {

@@ -33,13 +33,13 @@ W_EIG            = 0.20
 W_GRAD           = 0.15
 
 # ── Güven Skoru Eşikleri ─────────────────────────────────────
-CONF_DRIFT_THR   = 0.25       # altında → sürüklenme riski
+CONF_DRIFT_THR   = 0.35       # altında → sürüklenme riski
 CONF_LOST_THR    = 0.08       # altında → kayıp ilan et
 
 # ── Sürüklenme Tespiti ───────────────────────────────────────
 ANCHOR_COUNT     = 10         # bağlantı noktası sayısı
-ANCHOR_THRESHOLD = 15.0        # piksel cinsinden e_anchor eşiği
-KALMAN_THRESHOLD = 6.0        # Mahalanobis eşiği (χ² %95)
+ANCHOR_THRESHOLD = 25.0        # piksel cinsinden e_anchor eşiği
+KALMAN_THRESHOLD = 15.0        # Mahalanobis eşiği (χ² %95)
 
 # ── Yeniden Tespit ───────────────────────────────────────────
 HIST_THRESHOLD      = 0.35    # Bhattacharyya benzerlik skoru (1-dist)
@@ -60,9 +60,9 @@ REDET_K2_MAX_FRAMES = 120     # ~4 sn @30fps
 REDET_K3_MAX_FRAMES = 180     # ~6 sn @30fps
 
 # ORB kalitesi
-ORB_MIN_MATCHES     = 6      # RANSAC için minimum eşleşme sayısı
-ORB_PATCH_SCALE     = 4      # ref_gray boyutu: NCC_PATCH_SIZE × bu değer
-ORB_INLIER_RATIO    = 0.25   # minimum inlier oranı (düşürüldü: 0.30 → 0.25)
+ORB_MIN_MATCHES     = 4      # RANSAC için minimum eşleşme sayısı
+ORB_PATCH_SCALE     = 8      # ref_gray boyutu: NCC_PATCH_SIZE × bu değer
+ORB_INLIER_RATIO    = 0.20   # minimum inlier oranı (düşürüldü: 0.30 → 0.25)
 
 # ── Görüntü ──────────────────────────────────────────────────
 FRAME_WIDTH      = 640
