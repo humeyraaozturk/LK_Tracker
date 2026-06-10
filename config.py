@@ -7,7 +7,7 @@ LK_WIN_SIZE      = (15, 15)   # Başlangıç pencere boyutu
 LK_MAX_LEVEL     = 3          # Piramit seviyesi
 LK_MAX_ITER      = 20         # Maksimum iterasyon
 LK_EPSILON       = 0.03       # Durdurma kriteri
-LK_MIN_EIG       = 1e-4       # minEigThreshold (textureless eleme)
+LK_MIN_EIG       = 1e-6       # minEigThreshold (textureless eleme)
 
 # ── Adaptif Parametre Aralıkları ─────────────────────────────
 WIN_SIZE_MIN     = 7
@@ -33,8 +33,8 @@ W_EIG            = 0.20
 W_GRAD           = 0.15
 
 # ── Güven Skoru Eşikleri ─────────────────────────────────────
-CONF_DRIFT_THR   = 0.35       # altında → sürüklenme riski
-CONF_LOST_THR    = 0.08       # altında → kayıp ilan et
+CONF_DRIFT_THR   = 0.15       # altında → sürüklenme riski
+CONF_LOST_THR    = 0.05       # altında → kayıp ilan et
 
 # ── Sürüklenme Tespiti ───────────────────────────────────────
 ANCHOR_COUNT     = 10         # bağlantı noktası sayısı

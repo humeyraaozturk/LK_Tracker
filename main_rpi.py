@@ -1,15 +1,9 @@
 # =============================================================
-# main_rpi.py — Raspberry Pi 5 + IMX477 HQ Kamera
+# main_rpi.py — RPi 5 + HQ Camera (IMX477) giriş noktası
 # =============================================================
-# Kullanım:
-#   python main_rpi.py              # kamera ile
-#   python main_rpi.py video.mp4   # video dosyası ile
-#
 # Klavye kısayolları:
 #   Sol tık  → nokta ekle
 #   C        → tüm noktaları sil
-#   Y        → onay bekleyen noktayı onayla
-#   N        → onay bekleyen noktayı reddet
 #   F        → ileri-geri hata katmanı aç/kapat
 #   G        → güven skoru katmanı aç/kapat
 #   A        → adaptif parametre katmanı aç/kapat
@@ -17,16 +11,63 @@
 #   R        → yeniden tespit katmanı aç/kapat
 #   Q / ESC  → çıkış
 # =============================================================
+# Gerekli ortam değişkenleri (~/.bashrc içinde tanımlı olmalı):
+#   export LD_LIBRARY_PATH=/usr/local/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH
+#   export LIBCAMERA_IPA_MODULE_PATH=/usr/local/lib/aarch64-linux-gnu/libcamera/ipa
+#   export LIBCAMERA_IPA_PROXY_PATH=/usr/local/libexec/libcamera
+#   export GST_PLUGIN_PATH=/usr/local/lib/aarch64-linux-gnu/gstreamer-1.0
+# =============================================================
 
 import sys
+import os
 import cv2
-import numpy as np
 
 import config
 from core.tracker      import PointTracker
 from ui.display        import compose
 from utils.performance import PerformanceMonitor
 from utils.logger      import EventLogger
+
+
+# ── GStreamer pipeline ────────────────────────────────────────
+def make_gst_pipeline(width: int, height: int, fps: int = 30) -> str:
+    return (
+        f"libcamerasrc ! "
+        f"videoconvert ! "
+        f"video/x-raw,width={width},height={height},"
+        f"framerate={fps}/1,format=BGR ! "
+        f"appsink drop=1 sync=false max-buffers=1"
+    )
+
+
+def open_rpi_camera(width: int, height: int, fps: int = 30) -> cv2.VideoCapture:
+    """
+    RPi HQ Camera'yı GStreamer + libcamerasrc üzerinden açar.
+    Ortam değişkenleri ~/.bashrc'de tanımlı değilse burada da set edilir.
+    """
+    # Ortam değişkenlerini güvenceye al (bashrc yüklü değilse)
+    os.environ.setdefault(
+        "LD_LIBRARY_PATH",
+        "/usr/local/lib/aarch64-linux-gnu"
+    )
+    os.environ.setdefault(
+        "LIBCAMERA_IPA_MODULE_PATH",
+        "/usr/local/lib/aarch64-linux-gnu/libcamera/ipa"
+    )
+    os.environ.setdefault(
+        "LIBCAMERA_IPA_PROXY_PATH",
+        "/usr/local/libexec/libcamera"
+    )
+    os.environ.setdefault(
+        "GST_PLUGIN_PATH",
+        "/usr/local/lib/aarch64-linux-gnu/gstreamer-1.0"
+    )
+
+    pipeline = make_gst_pipeline(width, height, fps)
+    print(f"[RPi Kamera] GStreamer pipeline:\n  {pipeline}")
+
+    cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+    return cap
 
 
 # ── Fare geri çağrımı ────────────────────────────────────────
@@ -36,92 +77,75 @@ def make_mouse_callback(tracker: PointTracker, frame_ref: list):
             if frame_ref[0] is not None:
                 gray = cv2.cvtColor(frame_ref[0], cv2.COLOR_BGR2GRAY)
                 tracker.add_point(x, y, gray, frame_bgr=frame_ref[0])
-                print(f"[Nokta eklendi] id={len(tracker.points)-1} "
+                print(f"[Nokta eklendi] id={len(tracker.points)-1}  "
                       f"konum=({x}, {y})")
     return callback
 
 
 def main():
-    source   = sys.argv[1] if len(sys.argv) > 1 else None
-    is_video = source is not None
-
-    cap   = None
-    picam = None
-
+    # Video dosyası argüman olarak verilmişse normal VideoCapture kullan
+    is_video = len(sys.argv) > 1
     if is_video:
+        source = sys.argv[1]               # python main_rpi.py video.mp4
         cap = cv2.VideoCapture(source)
-        if not cap.isOpened():
-            print("[HATA] Video açılamadı.")
-            sys.exit(1)
-        video_fps      = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
+        if video_fps <= 0:
+            video_fps = 30.0
         frame_delay_ms = int(1000.0 / video_fps)
-        print(f"[Video] FPS: {video_fps:.1f}  gecikme: {frame_delay_ms}ms")
-
+        print(f"[Video] FPS: {video_fps:.1f}  →  kare gecikmesi: {frame_delay_ms} ms")
     else:
-        try:
-            from picamera2 import Picamera2
-        except ImportError:
-            print("[HATA] picamera2 bulunamadı: pip install picamera2")
-            sys.exit(1)
-
-        picam = Picamera2()
-        cam_cfg = picam.create_video_configuration(
-            main={"size"  : (config.FRAME_WIDTH, config.FRAME_HEIGHT),
-                  "format": "BGR888"},
-            controls={"FrameRate": 30},
+        # RPi HQ Camera
+        cap = open_rpi_camera(
+            width=config.FRAME_WIDTH,
+            height=config.FRAME_HEIGHT,
+            fps=30
         )
-        picam.configure(cam_cfg)
-        picam.start()
-        frame_delay_ms = 1
+        frame_delay_ms = 1                 # GStreamer kendi senkronizasyonunu yapar
 
-        fmt = picam.camera_configuration()["main"]["format"]
-        print(f"[Kamera] IMX477  {config.FRAME_WIDTH}x{config.FRAME_HEIGHT}"
-              f"  30fps  format={fmt}")
-
-        # Picamera2 bazı sistemlerde RGB verir, True yaparsanız BGR'ye çevrilir
-        needs_rgb2bgr = True
+    if not cap.isOpened():
+        print("[HATA] Kamera/video açılamadı.")
+        print("  → Ortam değişkenlerini kontrol edin:")
+        print("     source ~/.bashrc")
+        print("  → Kameranın tanındığını doğrulayın:")
+        print("     rpicam-hello --list-cameras")
+        sys.exit(1)
 
     logger  = EventLogger(log_dir="logs")
     tracker = PointTracker(logger=logger)
     perf    = PerformanceMonitor(window=30)
 
-    frame_ref         = [None]
-    mouse_cb_set      = False
-    mouse_cb_attempts = 0
+    frame_ref = [None]                     # fare callback için paylaşılan referans
 
-    WIN = "LK Tracker"
+    WIN = "LK Tracker  [RPi HQ Camera]"
     cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
     cv2.resizeWindow(WIN, config.FRAME_WIDTH + 450, config.FRAME_HEIGHT + 300)
+    cv2.setMouseCallback(WIN, make_mouse_callback(tracker, frame_ref))
 
     print("=" * 60)
-    print("  LK Tracker — Raspberry Pi")
+    print("  LK Tracker  —  RPi 5 + HQ Camera (IMX477)")
     print("  Sol tık: nokta ekle  |  C: sil  |  Q/ESC: çıkış")
     print("  F G A D R : katman aç/kapat")
-    print("  Y: onayla  N: reddet")
     print("=" * 60)
 
     while True:
-        # ── Kamera / Video okuma ──────────────────────────────
+        # ── Kamera okuma süresi ───────────────────────────────
         perf.start("capture")
-        if is_video:
-            ret, frame = cap.read()
-            if not ret:
-                print("[BİTTİ] Video sona erdi.")
-                break
-        else:
-            frame = picam.capture_array()
-            if needs_rgb2bgr:
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        ret, frame = cap.read()
         perf.stop("capture")
 
+        if not ret:
+            print("[BİTTİ] Video sona erdi veya kamera hatası.")
+            break
+
+        frame = cv2.resize(frame, (config.FRAME_WIDTH, config.FRAME_HEIGHT))
         frame_ref[0] = frame.copy()
 
-        # ── Algoritma ─────────────────────────────────────────
+        # ── Algoritma işlem süresi ────────────────────────────
         perf.start("process")
         states = tracker.update(frame)
         perf.stop("process")
 
-        # ── Render ────────────────────────────────────────────
+        # ── Render süresi ─────────────────────────────────────
         perf.start("render")
         output = compose(
             frame         = frame,
@@ -135,40 +159,28 @@ def main():
             perf_summary  = perf.summary(),
         )
         perf.stop("render")
+
+        # Toplam gecikme = capture + process + render
         perf.record_total()
 
-        # Terminal çıktısı — her 15 karede bir
+        # Terminale her 15 karede bir yaz
         total_q = perf._times["total"]
-        if len(total_q) > 0 and len(total_q) % 15 == 0:
+        if len(total_q) % 15 == 0:
             print("\r" + perf.terminal_line(
                 len(tracker.points), tracker.layers,
                 tracker.frame_conf), end="", flush=True)
 
         cv2.imshow(WIN, output)
 
-        # ── Mouse callback: imshow sonrası ayarla ─────────────
-        if not mouse_cb_set and mouse_cb_attempts < 30:
-            mouse_cb_attempts += 1
-            try:
-                cv2.setMouseCallback(
-                    WIN, make_mouse_callback(tracker, frame_ref)
-                )
-                mouse_cb_set = True
-                print(f"\n[OK] Mouse callback ayarlandı "
-                      f"(deneme {mouse_cb_attempts})")
-            except cv2.error:
-                if mouse_cb_attempts == 30:
-                    print("\n[HATA] Mouse callback ayarlanamadı.")
-
-        # ── Bekleme ve klavye ─────────────────────────────────
+        # Video: hedef kare süresinden toplam işlem süresi çıkarılır
         wait = max(1, int(frame_delay_ms - perf.last("total")))
         key  = cv2.waitKey(wait) & 0xFF
 
-        if key in (ord('q'), 27):
+        if key in (ord('q'), 27):          # Q veya ESC
             break
         elif key == ord('c'):
             tracker.remove_all()
-            print("\n[Temizlendi]")
+            print("\n[Temizlendi] Tüm noktalar silindi.")
         elif key == ord('y'):
             tracker.confirm_all_pending()
         elif key == ord('n'):
@@ -186,10 +198,7 @@ def main():
 
     print()
     logger.session_end()
-    if cap is not None:
-        cap.release()
-    if picam is not None:
-        picam.stop()
+    cap.release()
     cv2.destroyAllWindows()
 
 

@@ -244,6 +244,8 @@ class PointTracker:
                                     pt.id, pt.d_k, pt.e_anchor
                                 )
                             pt.state = "drifting"
+                            #if self.layers.get("drift"):
+                            #    pt.state = "drifting"
                         else:
                             pt.state = "tracking"
                     else:
@@ -373,7 +375,7 @@ class PointTracker:
         pt.redet_stage      = pt.pending_stage
         pt.state            = "tracking"
         pt.conf             = 0.6
-        pt.warmup_frames    = 8
+        pt.warmup_frames    = 15
         pt.lost_frames      = 0
         pt.kademe_frames    = 0
         pt.active_kademe    = 1
@@ -396,7 +398,7 @@ class PointTracker:
         pt.redet_stage      = stage
         pt.state            = "tracking"
         pt.conf             = 0.6
-        pt.warmup_frames    = 8
+        pt.warmup_frames    = 15
         pt.lost_frames      = 0
         pt.kademe_frames    = 0
         pt.active_kademe    = 1
@@ -562,7 +564,7 @@ class TrackedPoint:
         self.d_k            = 0.0
         self.e_anchor       = 0.0
         self.redet_stage    = 0
-        self.warmup_frames  = 0
+        self.warmup_frames  = 10
         self.lost_frames    = 0
         self.active_kademe  = 1
         self.kademe_frames  = 0
@@ -621,6 +623,15 @@ class TrackedPoint:
                     self.state = "drifting"   # tracking → drifting
                 else:
                     self.state = "lost"       # drifting → lost
+                    
+            else:
+                # Drift kapalı veya warmup'ta — Kalman'ı yine de güncelle
+                if layers.get("drift") and lk_params is not None:
+                    self.drift_detector.kalman.predict()
+                    self.d_k = self.drift_detector.kalman.update(
+                        float(new_pos[0]), float(new_pos[1])
+                    )
+                self.e_anchor = 0.0
 
     def get_info(self) -> dict:
         return {
